@@ -8,6 +8,13 @@ const getTodos = async () => {
   return response.data.data; // return array
 };
 
+// tidak terpakai
+const searchByTitle = async (title) => {
+  const response = await axios.get(API_URL + `/todos/search?q=${title}`);
+
+  return response.data.data;
+};
+
 const createTodo = async (title, completed) => {
   await axios.post(API_URL + "/todos", {
     title,
@@ -26,4 +33,4 @@ const deleteTodo = async (id) => {
   await axios.delete(API_URL + `/todos/${id}`);
 };
 
-export { getTodos, createTodo, updateTodo, deleteTodo };
+export { getTodos, searchByTitle, createTodo, updateTodo, deleteTodo };

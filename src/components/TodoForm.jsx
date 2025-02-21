@@ -52,9 +52,11 @@ const TodoForm = ({ isOpen, setIsOpen, fetchTodos, selectedTodo }) => {
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Todo</DialogTitle>
+            <DialogTitle>{selectedTodo ? "Edit Todo" : "Add Todo"}</DialogTitle>
             <DialogDescription>
-              Add your todo here. Click save when finished.
+              {selectedTodo
+                ? "Edit your todo here. Click save when finished."
+                : "Add your todo here. Click save when finished."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -73,7 +75,7 @@ const TodoForm = ({ isOpen, setIsOpen, fetchTodos, selectedTodo }) => {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit">{selectedTodo ? "Update" : "Save"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -9,6 +9,21 @@ const useTodos = () => {
     const data = await getTodos();
 
     setTodos(data); // masukkan ke array
+
+    return data;
+  };
+
+  // search todo menggunakan regex
+  const fetchSearch = async (title) => {
+    const allTodos = await getTodos(); // ambil semua todos terlebih dahulu
+
+    // buat regex untuk pencarian (case-insensitive)
+    const regex = new RegExp(title, "i");
+
+    // filter todo yang sesuai dengan title
+    const filteredTodos = allTodos.filter((todo) => regex.test(todo.title));
+
+    return filteredTodos;
   };
 
   // create todo
@@ -41,7 +56,9 @@ const useTodos = () => {
 
   return {
     todos,
+    setTodos,
     fetchTodos,
+    fetchSearch,
     handleCreate,
     handleCompleted,
     handleDelete,

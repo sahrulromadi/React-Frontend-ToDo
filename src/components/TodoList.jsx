@@ -10,9 +10,11 @@ import { CheckCircle, Circle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useTodos from "@/hooks/use-todos";
 import TodoForm from "./TodoForm";
+import { SearchForm } from "./SearchForm";
 
 const TodoList = () => {
-  const { todos, fetchTodos, handleCompleted, handleDelete } = useTodos();
+  const { todos, setTodos, fetchTodos, handleCompleted, handleDelete } =
+    useTodos();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState(null);
 
@@ -24,10 +26,14 @@ const TodoList = () => {
             <CardTitle className="text-2xl font-bold">Todo List</CardTitle>
             <CardDescription>Your daily tasks</CardDescription>
           </div>
-          <div>
-            <Button size="sm" onClick={() => setIsOpen(true)}>
-              Create
-            </Button>
+          <div className="flex gap-2 items-center justify-center">
+            {/* search form */}
+            <SearchForm setTodos={setTodos} />
+            <div className="ms-auto">
+              <Button size="sm" onClick={() => setIsOpen(true)}>
+                Create
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>

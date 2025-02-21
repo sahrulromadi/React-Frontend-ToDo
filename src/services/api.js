@@ -2,10 +2,12 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const getTodos = async () => {
-  const response = await axios.get(API_URL + "/todos");
+const getTodos = async (page) => {
+  const response = await axios.get(
+    API_URL + `/todos/pagination?page=${page}&limit=3`
+  );
 
-  return response.data.data; // return array
+  return response.data;
 };
 
 // tidak terpakai

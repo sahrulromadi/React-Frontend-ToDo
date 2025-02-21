@@ -3,19 +3,45 @@ import { getTodos, createTodo, updateTodo, deleteTodo } from "@/services/api";
 
 const useTodos = () => {
   const [todos, setTodos] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // get all todos
-  const fetchTodos = async () => {
-    const data = await getTodos();
+  const fetchTodos = async (page = currentPage) => {
+    // setIsLoading(true);
 
-    setTodos(data); // masukkan ke array
+    try {
+      const data = await getTodos(page);
 
-    return data;
+      // masukin data todos
+      setTodos(data.data);
+
+      // inisialisasi untuk di pagination
+      setCurrentPage(data.pagination.page);
+      setTotalPages(data.pagination.totalPages);
+
+      return data.data;
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // handle perubahan halaman
+  const handlePageChange = (currentPage) => {
+    setCurrentPage(currentPage);
+
+    // halaman baru
+    fetchTodos(currentPage);
   };
 
   // search todo menggunakan regex
   const fetchSearch = async (title) => {
-    const allTodos = await getTodos(); // ambil semua todos terlebih dahulu
+    const data = await getTodos(1); // hanya ambil halaman pertama
+    let allTodos = data.data;
 
     // buat regex untuk pencarian (case-insensitive)
     const regex = new RegExp(title, "i");
@@ -51,11 +77,14 @@ const useTodos = () => {
   };
 
   useEffect(() => {
-    fetchTodos();
-  }, []);
+    fetchTodos(currentPage);
+  }, [currentPage]);
 
   return {
     todos,
+    currentPage,
+    totalPages,
+    handlePageChange,
     setTodos,
     fetchTodos,
     fetchSearch,
@@ -63,6 +92,8 @@ const useTodos = () => {
     handleCompleted,
     handleDelete,
     handleUpdate,
+    isLoading,
+    error,
   };
 };
 

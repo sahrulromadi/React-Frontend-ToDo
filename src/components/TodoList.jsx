@@ -11,10 +11,21 @@ import { Button } from "@/components/ui/button";
 import useTodos from "@/hooks/use-todos";
 import TodoForm from "./TodoForm";
 import { SearchForm } from "./SearchForm";
+import { Pagination } from "./Pagination";
 
 const TodoList = () => {
-  const { todos, setTodos, fetchTodos, handleCompleted, handleDelete } =
-    useTodos();
+  const {
+    todos,
+    setTodos,
+    fetchTodos,
+    handleCompleted,
+    handleDelete,
+    isLoading,
+    error,
+    currentPage,
+    totalPages,
+    handlePageChange,
+  } = useTodos();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState(null);
 
@@ -37,68 +48,91 @@ const TodoList = () => {
           </div>
         </CardHeader>
         <CardContent>
-          {todos && todos.length > 0 ? (
-            <ul className="space-y-2">
-              {todos.map((todo) => (
-                <li
-                  key={todo.id}
-                  className="p-4 bg-white rounded-lg shadow-md cursor-pointer"
-                  onClick={() => {
-                    setIsOpen(true);
+          {/* loading */}
+          {isLoading && (
+            <div className="flex justify-center items-center">
+              <p className="text-gray-500">Loading...</p>
+            </div>
+          )}
 
-                    // kirimkan todo nya
-                    setSelectedTodo(todo);
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      {todo.completed ? (
-                        <CheckCircle
-                          className="w-5 h-5 text-green-500 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
+          {/* error */}
+          {error && (
+            <div className="flex justify-center items-center">
+              <p className="text-red-500">{error}</p>
+            </div>
+          )}
 
-                            handleCompleted(
-                              todo.id,
-                              todo.title,
-                              todo.completed
-                            );
-                          }}
-                        />
-                      ) : (
-                        <Circle
-                          className="w-5 h-5 text-gray-400 cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
+          {!isLoading && !error && todos && todos.length > 0 ? (
+            <>
+              <ul className="space-y-2">
+                {todos.map((todo) => (
+                  <li
+                    key={todo.id}
+                    className="p-4 bg-white rounded-lg shadow-md cursor-pointer"
+                    onClick={() => {
+                      setIsOpen(true);
 
-                            handleCompleted(
-                              todo.id,
-                              todo.title,
-                              todo.completed
-                            );
-                          }}
-                        />
-                      )}
-                      <p className="text-gray-700">{todo.title}</p>
+                      // kirimkan todo nya
+                      setSelectedTodo(todo);
+                    }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {todo.completed ? (
+                          <CheckCircle
+                            className="w-5 h-5 text-green-500 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+
+                              handleCompleted(
+                                todo.id,
+                                todo.title,
+                                todo.completed
+                              );
+                            }}
+                          />
+                        ) : (
+                          <Circle
+                            className="w-5 h-5 text-gray-400 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+
+                              handleCompleted(
+                                todo.id,
+                                todo.title,
+                                todo.completed
+                              );
+                            }}
+                          />
+                        )}
+                        <p className="text-gray-700">{todo.title}</p>
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        Last updated:{" "}
+                        {new Date(todo.updated_at).toLocaleString()}
+                      </p>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          handleDelete(todo.id);
+                        }}
+                      >
+                        Delete
+                      </Button>
                     </div>
-                    <p className="text-sm text-gray-500">
-                      Last updated: {new Date(todo.updated_at).toLocaleString()}
-                    </p>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-
-                        handleDelete(todo.id);
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+              {/* pagination */}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={(currentPage) => handlePageChange(currentPage)}
+              />
+            </>
           ) : (
             <p className="text-gray-500">No todos found.</p>
           )}
